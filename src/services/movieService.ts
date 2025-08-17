@@ -5,15 +5,22 @@ const BEARER_TOKEN = import.meta.env.VITE_TMDB_TOKEN;
 
 interface TMDBResponse {
   results: Movie[];
+  total_pages: number;
 }
 
-export const fetchMovies = async (query: string): Promise<Movie[]> => {
+export const fetchMovies = async (
+  query: string,
+  page: number
+): Promise<{ movies: Movie[]; totalPages: number }> => {
   const { data } = await axios.get<TMDBResponse>(
     'https://api.themoviedb.org/3/search/movie',
     {
-      params: { query },
+      params: { query, page },
       headers: { Authorization: `Bearer ${BEARER_TOKEN}` },
     }
   );
-  return data.results;
+  return {
+    movies: data.results,
+    totalPages: data.total_pages,
+  };
 };
